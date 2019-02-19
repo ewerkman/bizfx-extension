@@ -1,0 +1,17 @@
+{
+  "$type": "Sitecore.Commerce.Core.PolicySet, Sitecore.Commerce.Core",
+  "ArtifactStoreId": "A7517FEB-E4E2-4BA8-900A-988681BBA957",
+  "Id": "Entity-PolicySet-CatalogPolicySet",
+  "Version": 1,
+  "IsPersisted": false,
+  "Name": "CatalogPolicySet",
+  "Policies": {
+    "$type": "System.Collections.Generic.List`1[[Sitecore.Commerce.Core.Policy, Sitecore.Commerce.Core]], mscorlib",
+    "$values": [
+      {
+        "$type": "Sitecore.Commerce.Plugin.Catalog.KnownBundleTypePolicy, Sitecore.Commerce.Plugin.Catalog",
+        "Name": "Static"
+      }
+    ]
+  }
+}

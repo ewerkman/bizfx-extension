@@ -1,0 +1,15 @@
+<div class="date-picker" [ngClass]="{'date-picker-expand':isExpanded}">
+  <label for="property-datepicker-{{property.Name}}">{{property.DisplayName}}</label>
+  <div class="input-group">
+    <input class="form-control date-box" id="property-datepicker-{{property.Name}}" [(ngModel)]="date" (ngModelChange)="onChange(true)" name="dp"
+      (click)="toggleCalendar(d)" ngbDatepicker #d="ngbDatepicker" navigation="select" novalidate disabled>
+    <span class="input-group-btn">
+      <button scIconButton="secondary" id="calendar" type="button" (click)="toggleCalendar(d)">
+        <sc-icon icon="calendar" size="small"></sc-icon>
+      </button>
+    </span>
+  </div>
+</div>
+<div class="time-picker">
+  <ngb-timepicker [(ngModel)]="time" (ngModelChange)="onChange(false)"></ngb-timepicker>
+</div>
