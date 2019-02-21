@@ -41,6 +41,10 @@
         </button>
       </div>
 
+      <div *ngSwitchCase="'Multiselect'">
+        <app-multiselect [actionForm]="actionForm" [property]="property"></app-multiselect>
+      </div>
+
       <div *ngSwitchDefault>
 
         <div [ngSwitch]="property.OriginalType">
