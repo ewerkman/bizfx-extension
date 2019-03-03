@@ -8,8 +8,10 @@ namespace Plugin.Sample.SellableItem
 {
     using System.Reflection;
     using Microsoft.Extensions.DependencyInjection;
-    using Plugin.Sample.SellableItem.Components;
+    using Plugin.Sample.Notes.Pipelines.Blocks;
     using Sitecore.Commerce.Core;
+    using Sitecore.Commerce.EntityViews;
+    using Sitecore.Commerce.Plugin.Catalog;
     using Sitecore.Framework.Configuration;
     using Sitecore.Framework.Pipelines.Definitions.Extensions;
 
@@ -29,7 +31,19 @@ namespace Plugin.Sample.SellableItem
             var assembly = Assembly.GetExecutingAssembly();
             services.RegisterAllPipelineBlocks(assembly);
 
-            services.Plumber().ViewComponents(config => config.AddViewComponent<FeaturesComponent>());
+            services.Sitecore().Pipelines(config => config.ConfigurePipeline<IGetEntityViewPipeline>(c =>
+                     {
+                         c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>();
+                     })
+                     .ConfigurePipeline<IPopulateEntityViewActionsPipeline>(c =>
+                     {
+                         c.Add<PopulateNotesActionsBlock>().After<InitializeEntityViewActionsBlock>();
+                     })
+                     .ConfigurePipeline<IDoActionPipeline>(c =>
+                     {
+                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>();
+                     })
+                 );
 
             services.RegisterAllCommands(assembly);
         }

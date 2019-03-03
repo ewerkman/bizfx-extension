@@ -22,7 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Plugin.Sample.AdventureWorks\Plugin.Sample.AdventureWorks.csproj" />
     <ProjectReference Include="..\Plugin.Sample.Habitat\Plugin.Sample.Habitat.csproj" />
-    <ProjectReference Include="..\Plugin.Sample.SellableItem\Plugin.Sample.SellableItem.csproj" />
+    <ProjectReference Include="..\Plugin.Sample.SellableItem\Plugin.Sample.Notes.csproj" />
     <ProjectReference Include="..\Plugin.Sample.Upgrade\Plugin.Sample.Upgrade.csproj" />
   </ItemGroup>
 

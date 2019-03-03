@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FeaturesComponent.cs" company="Sitecore Corporation">
+// <copyright file="NotesComponent.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,11 +10,12 @@ namespace Plugin.Sample.Notes.Components
 
     /// <inheritdoc />
     /// <summary>
-    /// The FeaturesComponent.
+    /// The NotesComponent.
     /// </summary>
-    public class FeaturesComponent : Component
+    public class NotesComponent : Component
     {
-        public string FeatureList { get; set; }
+        public string InternalNotes { get; set; } = string.Empty;
+        public string WarrantyInformation { get; set; } = string.Empty;
     }
 }
 

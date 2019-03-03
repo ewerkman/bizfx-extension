@@ -12,10 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Plugin.Plumber.Component.Decorator" Version="0.3.3" />
     <PackageReference Include="Sitecore.Commerce.Core">
       <Version>2.2.*</Version>
     </PackageReference>
+    <PackageReference Include="Sitecore.Commerce.Plugin.Catalog" Version="2.2.46" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,10 +25,7 @@
     <Folder Include="Controllers\" />
     <Folder Include="Entities\" />
     <Folder Include="Models\" />
-    <Folder Include="Pipelines\" />
     <Folder Include="Pipelines\Arguments\" />
-    <Folder Include="Pipelines\Blocks" />
-    <Folder Include="Policies\" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
