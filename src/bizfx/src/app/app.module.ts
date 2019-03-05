@@ -75,9 +75,6 @@ import localeJaExtra from '../locales/extra/ja';
 import localeDe from '../locales/de';
 import localeDeExtra from '../locales/extra/de';
 
-import { MultiselectComponent } from './multiselect/multiselect.component';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 registerLocaleData(localeJa, 'Ja-JP', localeJaExtra);
@@ -116,8 +113,7 @@ registerLocaleData(localeJa, 'Ja-JP', localeJaExtra);
 
     ScBizFxModule,
 
-    AppRoutingModule,
-    NgMultiSelectDropDownModule.forRoot()
+    AppRoutingModule
   ],
   declarations: [
     AppComponent,
@@ -144,8 +140,7 @@ registerLocaleData(localeJa, 'Ja-JP', localeJaExtra);
 
     DecimalPipe,
     CurrencyPipe,
-    DatePipe,
-    MultiselectComponent    
+    DatePipe
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ScHttpXsrfInterceptor, multi: true}
