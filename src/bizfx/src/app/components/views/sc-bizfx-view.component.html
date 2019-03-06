@@ -7,6 +7,8 @@
       </div>
     </div>
     <div *ngIf="view">
+        <h1>Uihint: {{view.UiHint}}</h1>
+
       <sc-bizfx-flatview *ngIf="view.UiHint === 'Flat'" id="flatView-{{view.Name}}" [view]="view"></sc-bizfx-flatview>
 
       <sc-bizfx-listview *ngIf="view.UiHint === 'List'" id="listView-{{view?.Name}}" [view]="view"></sc-bizfx-listview>
@@ -14,6 +16,9 @@
       <sc-bizfx-tableview *ngIf="view.UiHint === 'Table'" id="tableView-{{view?.Name}}" [view]="view"></sc-bizfx-tableview>
 
       <sc-bizfx-searchview *ngIf="view.UiHint === 'Search'" id="tableView-{{view?.Name}}" [view]="view"></sc-bizfx-searchview>
+
+      <app-counter *ngIf="view.UiHint === 'Counter'" id="counterView-{{view?.Name}}" [view]="view"></app-counter>
+
     </div>
   </sc-progress-indicator-panel>
 </div>

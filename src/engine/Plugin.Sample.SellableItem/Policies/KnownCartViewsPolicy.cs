@@ -16,5 +16,6 @@ namespace Plugin.Sample.Notes.Policies
     public class KnownCartViewsPolicy : Policy
     {
         public string CartsDashboard { get; internal set; } = nameof(CartsDashboard);
+        public string CartCountView { get; internal set; } = nameof(CartCountView);
     }
 }

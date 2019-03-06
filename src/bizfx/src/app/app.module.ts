@@ -74,6 +74,7 @@ import localeJa from '../locales/ja';
 import localeJaExtra from '../locales/extra/ja';
 import localeDe from '../locales/de';
 import localeDeExtra from '../locales/extra/de';
+import { CounterComponent } from './counter/counter.component';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
@@ -140,7 +141,8 @@ registerLocaleData(localeJa, 'Ja-JP', localeJaExtra);
 
     DecimalPipe,
     CurrencyPipe,
-    DatePipe
+    DatePipe,
+    CounterComponent
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ScHttpXsrfInterceptor, multi: true}

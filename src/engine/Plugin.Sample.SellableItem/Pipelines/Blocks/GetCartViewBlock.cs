@@ -6,10 +6,12 @@
 
 namespace Plugin.Sample.Notes.Pipelines.Blocks
 {
+    using Plugin.Sample.Notes.Policies;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
+    using System;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -59,7 +61,32 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         {
             Condition.Requires(arg).IsNotNull($"{this.Name}: The argument can not be null");
 
+            var cartViewsPolicy = context.GetPolicy<KnownCartViewsPolicy>();
+
             /* Add business logic here */
+            if (!arg.Name.Equals(cartViewsPolicy.CartsDashboard, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return Task.FromResult(arg);
+            }
+
+            // Create a new view and add it to the current entity view.
+            var view = new EntityView
+            {
+                Name = cartViewsPolicy.CartCountView,
+                DisplayName = cartViewsPolicy.CartCountView,
+                EntityId = arg.EntityId,
+                UiHint = "Counter"
+            };
+
+            arg.ChildViews.Add(view);
+
+            var targetView = view;
+
+            targetView.Properties.Add(new ViewProperty
+            {
+                Name = "CartCount",
+                RawValue = 365
+            });
 
             return Task.FromResult(arg);
         }

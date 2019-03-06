@@ -64,4 +64,7 @@
   <sc-bizfx-tableview *ngIf="childView.UiHint === 'Table'" id="tableView-{{childView?.Name}}" [view]="childView"></sc-bizfx-tableview>
 
   <sc-bizfx-searchview *ngIf="childView.UiHint === 'Search'" id="tableView-{{childView?.Name}}" [view]="childView"></sc-bizfx-searchview>
+
+  <app-counter *ngIf="childView.UiHint === 'Counter'" id="counterView-{{view?.Name}}" [view]="childView"></app-counter>
+
 </div>
