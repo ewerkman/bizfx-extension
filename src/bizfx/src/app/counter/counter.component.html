@@ -1,7 +1,12 @@
 <sc-expander>
-    <sc-expander-header>
-      <sc-bizfx-header id="viewHeader-{{view.Name}}" [view]="view"></sc-bizfx-header>
-  
-      <sc-bizfx-actionbar scExpanderHeaderContent id="viewActions-{{view.Name}}" *ngIf="view.Actions" [view]="view"></sc-bizfx-actionbar>
-    </sc-expander-header>  
-</sc-expander>   
+  <sc-expander-header>
+    <sc-bizfx-header id="viewHeader-{{view.Name}}" [view]="view"></sc-bizfx-header>
+
+    <sc-bizfx-actionbar scExpanderHeaderContent id="viewActions-{{view.Name}}" *ngIf="view.Actions" [view]="view">
+    </sc-bizfx-actionbar>
+  </sc-expander-header>
+
+  <sc-expander-content>
+    <div class="counter">{{ view.Properties[0].Value }}</div>
+  </sc-expander-content>
+</sc-expander>

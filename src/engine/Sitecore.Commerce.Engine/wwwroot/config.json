@@ -13,7 +13,8 @@
       "https://localhost:4200",
       "http://localhost:4200",
       "http://sxa.storefront.com",
-      "http://plumber.local"
+      "http://plumber.local",
+      "http://localhost:8080"
     ],
     "AntiForgeryEnabled": true,
     "UseHttpsInKestrel": true,  
@@ -51,7 +52,7 @@
   "Certificates": {
     "Certificates": [
       {
-        "Thumbprint": "39A2C32E339C49244C14011034D579CA4BBDE9DC",
+        "Thumbprint": "705A71206F4AC0C0454B102A9BFFAE155F26D255",
         "DefaultRoles": [
           "sitecore\\QA",
           "sitecore\\Commerce Business User"

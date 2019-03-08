@@ -35,7 +35,9 @@ namespace Plugin.Sample.SellableItem
             services.Sitecore().Pipelines(config => config.ConfigurePipeline<IGetEntityViewPipeline>(c =>
                      {
                          c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>()
-                         .Add<GetCartViewBlock>().After<GetNotesViewBlock>();
+                         .Add<GetCartViewBlock>().After<GetNotesViewBlock>()
+                         .Add<GetCartsViewBlock>().After<GetCartViewBlock>()
+                         .Add<GetCartLinesViewBlock>().After<GetCartsViewBlock>();
                      })
                      .ConfigurePipeline<IPopulateEntityViewActionsPipeline>(c =>
                      {
@@ -43,7 +45,8 @@ namespace Plugin.Sample.SellableItem
                      })
                      .ConfigurePipeline<IDoActionPipeline>(c =>
                      {
-                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>();
+                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>()
+                         .Add<DoActionPaginateCartsListBlock>().After<DoActionEditNotesBlock>();
                      })
                      .ConfigurePipeline<IBizFxNavigationPipeline>(c =>
                      {

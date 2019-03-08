@@ -7,7 +7,6 @@
       </div>
     </div>
     <div *ngIf="view">
-        <h1>Uihint: {{view.UiHint}}</h1>
 
       <sc-bizfx-flatview *ngIf="view.UiHint === 'Flat'" id="flatView-{{view.Name}}" [view]="view"></sc-bizfx-flatview>
 

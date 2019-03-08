@@ -1,17 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetCartViewBlock.cs" company="Sitecore Corporation">
+// <copyright file="GetCartsViewBlockBlock.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Plugin.Sample.Notes.Pipelines.Blocks
 {
+    using Plugin.Sample.Notes.Extensions;
     using Plugin.Sample.Notes.Policies;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
+    using Sitecore.Commerce.Plugin.Carts;
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -24,25 +28,16 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     ///     </cref>
     /// </seealso>
     [PipelineDisplayName("Change to <Project>Constants.Pipelines.Blocks.<Block Name>")]
-    public class GetCartViewBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
+    public class GetCartsViewBlock : GetListViewBlock
     {
-        /// <summary>
-        /// Gets or sets the commander.
-        /// </summary>
-        /// <value>
-        /// The commander.
-        /// </value>
-        protected CommerceCommander Commander { get; set; }
+
 
         /// <inheritdoc />
         /// <summary>Initializes a new instance of the <see cref="T:Sitecore.Framework.Pipelines.PipelineBlock" /> class.</summary>
         /// <param name="commander">The commerce commander.</param>
-        public GetCartViewBlock(CommerceCommander commander)
-            : base(null)
+        public GetCartsViewBlock(ViewCommander commander)
+            : base(commander)
         {
-
-            this.Commander = commander;
-
         }
 
         /// <summary>
@@ -63,41 +58,29 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
 
             var cartViewsPolicy = context.GetPolicy<KnownCartViewsPolicy>();
 
-            /* Add business logic here */
             if (!arg.Name.Equals(cartViewsPolicy.CartsDashboard, StringComparison.InvariantCultureIgnoreCase))
             {
                 return arg;
             }
 
-            // Create a new view and add it to the current entity view.
-            var view = new EntityView
+            EntityViewArgument entityViewArgument = context.CommerceContext.GetObjects<EntityViewArgument>().FirstOrDefault<EntityViewArgument>();
+
+            var cartsView = new EntityView()
             {
-                Name = cartViewsPolicy.CartCountView,
-                DisplayName = cartViewsPolicy.CartCountView,
-                EntityId = arg.EntityId,
-                UiHint = "Counter"
+                Name = "Carts",
+                DisplayName = "Carts",
+                UiHint = "Table"
             };
+            arg.ChildViews.Add(cartsView);
 
-            arg.ChildViews.Add(view);
+            string listName = "Carts";
+            await this.SetListMetadata(cartsView, listName, "PaginateCartsViewList", context);
 
-            var targetView = view;
+            var carts = (await this.GetEntities(arg, "Carts", context)).OfType<Cart>();
 
-            var cartCount = await GetListCount("Carts", context.CommerceContext);
-
-            targetView.Properties.Add(new ViewProperty
-            {
-                Name = "CartCount",
-                RawValue = cartCount
-            });
+            cartsView.FillWithCarts(carts);
 
             return arg;
-        }
-
-        private async Task<Decimal> GetListCount(string listName, CommerceContext context)
-        {
-            var listMetaData = await this.Commander.Pipeline<IPopulateListMetadataPipeline>().Run(new ListMetadata(listName), (IPipelineExecutionContextOptions)context.GetPipelineContextOptions());
-
-            return Convert.ToDecimal(listMetaData.Count);
         }
     }
 }
