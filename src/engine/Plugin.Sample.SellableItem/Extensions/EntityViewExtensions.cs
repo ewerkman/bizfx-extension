@@ -48,5 +48,19 @@ namespace Plugin.Sample.Notes.Extensions
 
             return cartsView;
         }
+
+        public static EntityView AddProperty(this EntityView entityView, string name, object rawValue, string displayName = null, string uiType = null)
+        {
+            ViewProperty viewProperty = new ViewProperty();
+
+            viewProperty.Name = name;
+            viewProperty.DisplayName = displayName;
+            viewProperty.RawValue = rawValue;
+            viewProperty.UiType = uiType;
+
+            entityView.Properties.Add(viewProperty);
+
+            return entityView;
+        }
     }
 }

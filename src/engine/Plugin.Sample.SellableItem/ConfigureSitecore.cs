@@ -37,7 +37,10 @@ namespace Plugin.Sample.SellableItem
                          c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>()
                          .Add<GetCartViewBlock>().After<GetNotesViewBlock>()
                          .Add<GetCartsViewBlock>().After<GetCartViewBlock>()
-                         .Add<GetCartLinesViewBlock>().After<GetCartsViewBlock>();
+                         .Add<GetCartTotalsBlock>().After<GetCartsViewBlock>()
+                         .Add<GetCartLinesViewBlock>().After<GetCartTotalsBlock>()
+                         .Add<GetCartAdjustmentsViewBlock>().After<GetCartLinesViewBlock>()
+                         .Add<GetCartMessagesViewBlock>().After<GetCartLinesViewBlock>();
                      })
                      .ConfigurePipeline<IPopulateEntityViewActionsPipeline>(c =>
                      {
