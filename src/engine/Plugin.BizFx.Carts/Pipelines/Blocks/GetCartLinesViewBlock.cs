@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetCartLinesViewBlock.cs" company="Sitecore Corporation">
-//   Copyright (c) Sitecore Corporation 1999-2019
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Plugin.Sample.Notes.Pipelines.Blocks
+﻿namespace Plugin.BizFx.Carts.Pipelines.Blocks
 {
+    using Plugin.BizFx.Carts.Policies;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
     using Sitecore.Commerce.Plugin.Carts;
@@ -64,19 +59,21 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         {
             Condition.Requires(entityView).IsNotNull($"{this.Name}: The argument can not be null");
 
+            var knownCartViewsPolicy = context.GetPolicy<KnownCartViewsPolicy>();
             EntityViewArgument request = context.CommerceContext.GetObject<EntityViewArgument>();
-            //if (string.IsNullOrEmpty(request?.ViewName) || !request.ViewName.Equals(context.GetPolicy<KnownOrderViewsPolicy>().Lines, StringComparison.OrdinalIgnoreCase) && !request.ViewName.Equals(context.GetPolicy<KnownOrderViewsPolicy>().LineItemDetails, StringComparison.OrdinalIgnoreCase) && !request.ViewName.Equals(context.GetPolicy<KnownOrderViewsPolicy>().Master, StringComparison.OrdinalIgnoreCase) || (request.ViewName.Equals(context.GetPolicy<KnownOrderViewsPolicy>().LineItemDetails, StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(request.ItemId) || !(request.Entity is Order)))
-            //    return entityView;
-            if (!(request.Entity is Cart))
+
+            if(string.IsNullOrEmpty(request?.ViewName) ||
+                !request.ViewName.Equals(knownCartViewsPolicy.Master, StringComparison.OrdinalIgnoreCase) || 
+                !(request.Entity is Cart))
             {
                 return Task.FromResult(entityView);
             }
-
+            
             Cart cart = (Cart)request.Entity;
 
             EntityView linesView = new EntityView();
             linesView.EntityId = cart.Id;
-            linesView.Name = "Lines";
+            linesView.Name = knownCartViewsPolicy.CartLinesView;
             linesView.UiHint = "Table";
 
             entityView.ChildViews.Add(linesView);

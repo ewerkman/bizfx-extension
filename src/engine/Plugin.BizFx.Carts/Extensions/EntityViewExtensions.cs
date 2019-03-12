@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plugin.Sample.Notes.Extensions
+namespace Plugin.BizFx.Carts.Extensions
 {
     internal static class EntityViewExtensions
     {

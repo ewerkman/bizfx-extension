@@ -4,15 +4,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Plugin.Sample.Notes.Pipelines.Blocks
+namespace Plugin.BizFx.Carts.Pipelines.Blocks
 {
-    using Plugin.Sample.Notes.Extensions;
+    using Plugin.BizFx.Carts.Extensions;
+    using Plugin.BizFx.Carts.Policies;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
     using Sitecore.Commerce.Plugin.Carts;
     using Sitecore.Commerce.Plugin.Pricing;
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -63,14 +65,17 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         {
             Condition.Requires(entityView).IsNotNull($"{this.Name}: The argument can not be null");
 
-            EntityViewArgument entityViewArgument = context.CommerceContext.GetObject<EntityViewArgument>();
+            var knownCartViewsPolicy = context.GetPolicy<KnownCartViewsPolicy>();
+            EntityViewArgument request = context.CommerceContext.GetObject<EntityViewArgument>();
 
-            if (!(entityViewArgument.Entity is Cart))
+            if (string.IsNullOrEmpty(request?.ViewName) ||
+                !request.ViewName.Equals(knownCartViewsPolicy.Master, StringComparison.OrdinalIgnoreCase) ||
+                !(request.Entity is Cart))
             {
                 return Task.FromResult(entityView);
             }
 
-            Cart cart = entityViewArgument.Entity as Cart;
+            Cart cart = request.Entity as Cart;
             
             EntityView adjustmentsView = new EntityView();
             adjustmentsView.EntityId = cart.Id;

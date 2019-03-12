@@ -1,14 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetCartViewBlock.cs" company="Sitecore Corporation">
+// <copyright file="GetCartLineChangeQuantityViewBlock.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Plugin.Sample.Notes.Pipelines.Blocks
+namespace Plugin.BizFx.Carts.Pipelines.Blocks
 {
-    using Plugin.Sample.Notes.Policies;
+    using Plugin.BizFx.Carts.Extensions;
+    using Plugin.BizFx.Carts.Policies;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
+    using Sitecore.Commerce.Plugin.Carts;
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
     using System;
@@ -24,7 +26,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     ///     </cref>
     /// </seealso>
     [PipelineDisplayName("Change to <Project>Constants.Pipelines.Blocks.<Block Name>")]
-    public class GetCartViewBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
+    public class GetCartLineChangeQuantityViewBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
     {
         /// <summary>
         /// Gets or sets the commander.
@@ -37,7 +39,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         /// <inheritdoc />
         /// <summary>Initializes a new instance of the <see cref="T:Sitecore.Framework.Pipelines.PipelineBlock" /> class.</summary>
         /// <param name="commander">The commerce commander.</param>
-        public GetCartViewBlock(CommerceCommander commander)
+        public GetCartLineChangeQuantityViewBlock(CommerceCommander commander)
             : base(null)
         {
 
@@ -57,47 +59,25 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         /// <returns>
         /// The <see cref="PipelineArgument"/>.
         /// </returns>
-        public override async Task<EntityView> Run(EntityView arg, CommercePipelineExecutionContext context)
+        public override Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
         {
-            Condition.Requires(arg).IsNotNull($"{this.Name}: The argument can not be null");
+            Condition.Requires(entityView).IsNotNull($"{this.Name}: The argument can not be null");
 
-            var cartViewsPolicy = context.GetPolicy<KnownCartViewsPolicy>();
+            var knownCartViewsPolicy = context.GetPolicy<KnownCartViewsPolicy>();
+            EntityViewArgument request = context.CommerceContext.GetObject<EntityViewArgument>();
 
-            /* Add business logic here */
-            if (!arg.Name.Equals(cartViewsPolicy.CartsDashboard, StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrEmpty(request?.ViewName) ||
+                !request.ViewName.Equals(knownCartViewsPolicy.CartLineChangeQuantityView, StringComparison.OrdinalIgnoreCase) ||
+                !(request.Entity is Cart))
             {
-                return arg;
+                return Task.FromResult(entityView);
             }
 
-            // Create a new view and add it to the current entity view.
-            var view = new EntityView
-            {
-                Name = cartViewsPolicy.CartCountView,
-                DisplayName = cartViewsPolicy.CartCountView,
-                EntityId = arg.EntityId,
-                UiHint = "Counter"
-            };
+            Cart cart = request.Entity as Cart;
 
-            arg.ChildViews.Add(view);
+            entityView.AddProperty("Quantity", 1.0);
 
-            var targetView = view;
-
-            var cartCount = await GetListCount("Carts", context.CommerceContext);
-
-            targetView.Properties.Add(new ViewProperty
-            {
-                Name = "CartCount",
-                RawValue = cartCount
-            });
-
-            return arg;
-        }
-
-        private async Task<Decimal> GetListCount(string listName, CommerceContext context)
-        {
-            var listMetaData = await this.Commander.Pipeline<IPopulateListMetadataPipeline>().Run(new ListMetadata(listName), (IPipelineExecutionContextOptions)context.GetPipelineContextOptions());
-
-            return Convert.ToDecimal(listMetaData.Count);
+            return Task.FromResult(entityView);
         }
     }
 }

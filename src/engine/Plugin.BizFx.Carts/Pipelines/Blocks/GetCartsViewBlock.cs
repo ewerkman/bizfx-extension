@@ -1,17 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetCartNavigationViewBlock.cs" company="Sitecore Corporation">
+// <copyright file="GetCartsViewBlockBlock.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Plugin.Sample.Notes.Pipelines.Blocks
+namespace Plugin.BizFx.Carts.Pipelines.Blocks
 {
-    using Plugin.Sample.Notes.Policies;
+    using Plugin.BizFx.Carts.Extensions;
+    using Plugin.BizFx.Carts.Policies;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
+    using Sitecore.Commerce.Plugin.Carts;
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -24,25 +28,16 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     ///     </cref>
     /// </seealso>
     [PipelineDisplayName("Change to <Project>Constants.Pipelines.Blocks.<Block Name>")]
-    public class GetCartNavigationViewBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
+    public class GetCartsViewBlock : GetListViewBlock
     {
-        /// <summary>
-        /// Gets or sets the commander.
-        /// </summary>
-        /// <value>
-        /// The commander.
-        /// </value>
-        protected ViewCommander Commander { get; set; }
+
 
         /// <inheritdoc />
         /// <summary>Initializes a new instance of the <see cref="T:Sitecore.Framework.Pipelines.PipelineBlock" /> class.</summary>
         /// <param name="commander">The commerce commander.</param>
-        public GetCartNavigationViewBlock(ViewCommander commander)
-            : base(null)
+        public GetCartsViewBlock(ViewCommander commander)
+            : base(commander)
         {
-
-            this.Commander = commander;
-
         }
 
         /// <summary>
@@ -57,21 +52,35 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         /// <returns>
         /// The <see cref="PipelineArgument"/>.
         /// </returns>
-        public override Task<EntityView> Run(EntityView arg, CommercePipelineExecutionContext context)
+        public override async Task<EntityView> Run(EntityView arg, CommercePipelineExecutionContext context)
         {
             Condition.Requires(arg).IsNotNull($"{this.Name}: The argument can not be null");
 
-            var childViews = arg.ChildViews;
+            var cartViewsPolicy = context.GetPolicy<KnownCartViewsPolicy>();
 
-            EntityView cartsView = new EntityView();
+            if (!arg.Name.Equals(cartViewsPolicy.CartsDashboard, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return arg;
+            }
 
-            cartsView.Name = context.GetPolicy<KnownCartViewsPolicy>().CartsDashboard;
-            cartsView.ItemId = context.GetPolicy<KnownCartViewsPolicy>().CartsDashboard;
-            cartsView.Icon = "luggagecart";
-            cartsView.DisplayRank = 1;
-            childViews.Add((Model)cartsView);
+            EntityViewArgument entityViewArgument = context.CommerceContext.GetObjects<EntityViewArgument>().FirstOrDefault<EntityViewArgument>();
 
-            return Task.FromResult<EntityView>(arg);
+            var cartsView = new EntityView()
+            {
+                Name = "Carts",
+                DisplayName = "Carts",
+                UiHint = "Table"
+            };
+            arg.ChildViews.Add(cartsView);
+
+            string listName = "Carts";
+            await this.SetListMetadata(cartsView, listName, "PaginateCartsViewList", context);
+
+            var carts = (await this.GetEntities(arg, "Carts", context)).OfType<Cart>();
+
+            cartsView.FillWithCarts(carts);
+
+            return arg;
         }
     }
 }

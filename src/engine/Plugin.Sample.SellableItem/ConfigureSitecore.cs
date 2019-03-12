@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Plugin.Sample.SellableItem
+namespace Plugin.Sample.Notes
 {
     using System.Reflection;
     using Microsoft.Extensions.DependencyInjection;
@@ -34,13 +34,7 @@ namespace Plugin.Sample.SellableItem
 
             services.Sitecore().Pipelines(config => config.ConfigurePipeline<IGetEntityViewPipeline>(c =>
                      {
-                         c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>()
-                         .Add<GetCartViewBlock>().After<GetNotesViewBlock>()
-                         .Add<GetCartsViewBlock>().After<GetCartViewBlock>()
-                         .Add<GetCartTotalsBlock>().After<GetCartsViewBlock>()
-                         .Add<GetCartLinesViewBlock>().After<GetCartTotalsBlock>()
-                         .Add<GetCartAdjustmentsViewBlock>().After<GetCartLinesViewBlock>()
-                         .Add<GetCartMessagesViewBlock>().After<GetCartLinesViewBlock>();
+                         c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>();
                      })
                      .ConfigurePipeline<IPopulateEntityViewActionsPipeline>(c =>
                      {
@@ -48,12 +42,7 @@ namespace Plugin.Sample.SellableItem
                      })
                      .ConfigurePipeline<IDoActionPipeline>(c =>
                      {
-                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>()
-                         .Add<DoActionPaginateCartsListBlock>().After<DoActionEditNotesBlock>();
-                     })
-                     .ConfigurePipeline<IBizFxNavigationPipeline>(c =>
-                     {
-                         c.Add<GetCartNavigationViewBlock>().After<GetMerchandisingNavigationViewBlock>();
+                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>();
                      })
                  );
 

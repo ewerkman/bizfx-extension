@@ -4,9 +4,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Plugin.Sample.Notes.Pipelines.Blocks
+namespace Plugin.BizFx.Carts.Pipelines.Blocks
 {
-    using Plugin.Sample.Notes.Extensions;
+    using Plugin.BizFx.Carts.Extensions;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
     using Sitecore.Commerce.Plugin.Carts;
