@@ -379,6 +379,23 @@
               "$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
               "EntityType": "Sitecore.Commerce.Plugin.Orders.Order",
               "Role": "sitecore\\Customer Service Representative"
+            },
+            {
+              "$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
+              "View": "CartsDashboard",
+              "Role": "sitecore\\Cart Manager"
+            },
+            {
+              "$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
+              "View":"CartLinesView",
+              "Action": "DeleteCartLine",
+              "Role": "sitecore\\Cart Administrator"
+            },
+            {
+              "$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
+              "View": "CartLinesView",
+              "Action": "ChangeLineQuantity",
+              "Role": "sitecore\\Cart Manager"
             }
           ]
         }

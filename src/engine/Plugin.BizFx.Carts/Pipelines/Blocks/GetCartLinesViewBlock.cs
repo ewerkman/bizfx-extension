@@ -90,6 +90,12 @@
 
                 this.PopulateLineChildView(lineView, line, context);
 
+                CartProductComponent component = line.GetComponent<CartProductComponent>();                
+                EntityView sellableItemView = new EntityView();
+                sellableItemView.EntityId = component.Id;
+                sellableItemView.DisplayName = component.DisplayName;
+                lineView.ChildViews.Add(sellableItemView);
+
                 linesView.ChildViews.Add((Model)lineView);
             }
 
@@ -102,82 +108,81 @@
                 return;
 
             LineQuantityPolicy policy = context.GetPolicy<LineQuantityPolicy>();
-            List<ViewProperty> properties1 = lineEntityView.Properties;
-            ViewProperty viewProperty1 = new ViewProperty();
-            viewProperty1.Name = "ItemId";
-            viewProperty1.IsHidden = true;
-            viewProperty1.IsReadOnly = true;
-            viewProperty1.RawValue = (object)line.Id;
-            properties1.Add(viewProperty1);
-            List<ViewProperty> properties2 = lineEntityView.Properties;
-            ViewProperty viewProperty2 = new ViewProperty();
-            viewProperty2.Name = "ListPrice";
-            viewProperty2.IsReadOnly = true;
-            viewProperty2.RawValue = (object)line.UnitListPrice;
-            properties2.Add(viewProperty2);
-            List<ViewProperty> properties3 = lineEntityView.Properties;
-            ViewProperty viewProperty3 = new ViewProperty();
-            viewProperty3.Name = "SellPrice";
-            viewProperty3.IsReadOnly = true;
-            viewProperty3.RawValue = (object)line.GetPolicy<PurchaseOptionMoneyPolicy>().SellPrice;
-            properties3.Add(viewProperty3);
-            List<ViewProperty> properties4 = lineEntityView.Properties;
-            ViewProperty viewProperty4 = new ViewProperty();
-            viewProperty4.Name = "Quantity";
-            viewProperty4.IsReadOnly = true;
-            viewProperty4.RawValue = (object)(policy.AllowDecimal ? line.Quantity : (Decimal)(int)line.Quantity);
-            viewProperty4.OriginalType = policy.AllowDecimal ? typeof(Decimal).FullName : typeof(int).FullName;
-            properties4.Add(viewProperty4);
-            List<ViewProperty> properties5 = lineEntityView.Properties;
-            ViewProperty viewProperty5 = new ViewProperty();
-            viewProperty5.Name = "Subtotal";
-            viewProperty5.IsReadOnly = true;
-            viewProperty5.RawValue = (object)line.Totals.SubTotal;
-            properties5.Add(viewProperty5);
-            List<ViewProperty> properties6 = lineEntityView.Properties;
-            ViewProperty viewProperty6 = new ViewProperty();
-            viewProperty6.Name = "Adjustments";
-            viewProperty6.IsReadOnly = true;
-            viewProperty6.RawValue = (object)line.Totals.AdjustmentsTotal;
-            properties6.Add(viewProperty6);
-            List<ViewProperty> properties7 = lineEntityView.Properties;
-            ViewProperty viewProperty7 = new ViewProperty();
-            viewProperty7.Name = "LineTotal";
-            viewProperty7.IsReadOnly = true;
-            viewProperty7.RawValue = (object)line.Totals.GrandTotal;
-            properties7.Add(viewProperty7);
+
+            ViewProperty itemIdProperty = new ViewProperty();
+            itemIdProperty.Name = "ItemId";
+            itemIdProperty.IsHidden = true;
+            itemIdProperty.IsReadOnly = true;
+            itemIdProperty.RawValue = (object)line.Id;
+            lineEntityView.Properties.Add(itemIdProperty);
+            
+            ViewProperty listPriceProperty = new ViewProperty();
+            listPriceProperty.Name = "ListPrice";
+            listPriceProperty.IsReadOnly = true;
+            listPriceProperty.RawValue = (object)line.UnitListPrice;
+            lineEntityView.Properties.Add(listPriceProperty);
+            
+            ViewProperty sellPriceProperty = new ViewProperty();
+            sellPriceProperty.Name = "SellPrice";
+            sellPriceProperty.IsReadOnly = true;
+            sellPriceProperty.RawValue = (object)line.GetPolicy<PurchaseOptionMoneyPolicy>().SellPrice;
+            lineEntityView.Properties.Add(sellPriceProperty);
+            
+            ViewProperty quantityProperty = new ViewProperty();
+            quantityProperty.Name = "Quantity";
+            quantityProperty.IsReadOnly = true;
+            quantityProperty.RawValue = (object)(policy.AllowDecimal ? line.Quantity : (Decimal)(int)line.Quantity);
+            quantityProperty.OriginalType = policy.AllowDecimal ? typeof(Decimal).FullName : typeof(int).FullName;
+            lineEntityView.Properties.Add(quantityProperty);
+            
+            ViewProperty subtotalProperty = new ViewProperty();
+            subtotalProperty.Name = "Subtotal";
+            subtotalProperty.IsReadOnly = true;
+            subtotalProperty.RawValue = (object)line.Totals.SubTotal;
+            lineEntityView.Properties.Add(subtotalProperty);
+            
+            ViewProperty adjustmentsProperty = new ViewProperty();
+            adjustmentsProperty.Name = "Adjustments";
+            adjustmentsProperty.IsReadOnly = true;
+            adjustmentsProperty.RawValue = (object)line.Totals.AdjustmentsTotal;
+            lineEntityView.Properties.Add(adjustmentsProperty);
+            
+            ViewProperty lineTotalProperty = new ViewProperty();
+            lineTotalProperty.Name = "LineTotal";
+            lineTotalProperty.IsReadOnly = true;
+            lineTotalProperty.RawValue = (object)line.Totals.GrandTotal;
+            lineEntityView.Properties.Add(lineTotalProperty);
+
             CartProductComponent component = line.GetComponent<CartProductComponent>();
-            List<ViewProperty> properties8 = lineEntityView.Properties;
-            ViewProperty viewProperty8 = new ViewProperty();
-            viewProperty8.Name = "Name";
-            viewProperty8.IsReadOnly = true;
-            viewProperty8.RawValue = (object)component.DisplayName;
-            viewProperty8.UiType = "ItemLink";
-            properties8.Add(viewProperty8);
-            List<ViewProperty> properties9 = lineEntityView.Properties;
-            ViewProperty viewProperty9 = new ViewProperty();
-            viewProperty9.Name = "Size";
-            viewProperty9.IsReadOnly = true;
-            viewProperty9.RawValue = (object)component.Size;
-            properties9.Add(viewProperty9);
-            List<ViewProperty> properties10 = lineEntityView.Properties;
-            ViewProperty viewProperty10 = new ViewProperty();
-            viewProperty10.Name = "Color";
-            viewProperty10.IsReadOnly = true;
-            viewProperty10.RawValue = (object)component.Color;
-            properties10.Add(viewProperty10);
-            List<ViewProperty> properties11 = lineEntityView.Properties;
-            ViewProperty viewProperty11 = new ViewProperty();
-            viewProperty11.Name = "Style";
-            viewProperty11.IsReadOnly = true;
-            viewProperty11.RawValue = (object)component.Style;
-            properties11.Add(viewProperty11);
-            List<ViewProperty> properties12 = lineEntityView.Properties;
-            ViewProperty viewProperty12 = new ViewProperty();
-            viewProperty12.Name = "Variation";
-            viewProperty12.IsReadOnly = true;
-            viewProperty12.RawValue = line.HasComponent<ItemVariationSelectedComponent>() ? (object)line.GetComponent<ItemVariationSelectedComponent>().VariationId : (object)string.Empty;
-            properties12.Add(viewProperty12);
+            ViewProperty sellableItemNameProperty = new ViewProperty();
+            sellableItemNameProperty.Name = "Name";
+            sellableItemNameProperty.IsReadOnly = true;
+            sellableItemNameProperty.RawValue = (object)component.DisplayName;
+            lineEntityView.Properties.Add(sellableItemNameProperty);
+
+            ViewProperty sizeProperty = new ViewProperty();
+            sizeProperty.Name = "Size";
+            sizeProperty.IsReadOnly = true;
+            sizeProperty.RawValue = (object)component.Size;
+            lineEntityView.Properties.Add(sizeProperty);
+
+            ViewProperty colourProperty = new ViewProperty();
+            colourProperty.Name = "Color";
+            colourProperty.IsReadOnly = true;
+            colourProperty.RawValue = (object)component.Color;
+            lineEntityView.Properties.Add(colourProperty);
+
+            ViewProperty styleProperty = new ViewProperty();
+            styleProperty.Name = "Style";
+            styleProperty.IsReadOnly = true;
+            styleProperty.RawValue = (object)component.Style;
+            lineEntityView.Properties.Add(styleProperty);
+            
+            ViewProperty variationProperty = new ViewProperty();
+            variationProperty.Name = "Variation";
+            variationProperty.IsReadOnly = true;
+            variationProperty.RawValue = line.HasComponent<ItemVariationSelectedComponent>() ? (object)line.GetComponent<ItemVariationSelectedComponent>().VariationId : (object)string.Empty;
+            lineEntityView.Properties.Add(variationProperty);
         }
 
     }
