@@ -1,20 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DoActionEditNotesBlock.cs" company="Sitecore Corporation">
+// <copyright file="PopulateFeaturesActionsBlockBlock.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Plugin.Sample.Notes.Pipelines.Blocks
 {
-    using Plugin.Sample.Notes.Components;
     using Plugin.Sample.Notes.Policies;
     using Sitecore.Commerce.Core;
-    using Sitecore.Commerce.Plugin.Catalog;
     using Sitecore.Commerce.EntityViews;
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -27,7 +24,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     ///     </cref>
     /// </seealso>
     [PipelineDisplayName("Change to <Project>Constants.Pipelines.Blocks.<Block Name>")]
-    public class DoActionEditNotesBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
+    public class PopulateFeaturesActionsBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
     {
         /// <summary>
         /// Gets or sets the commander.
@@ -35,12 +32,12 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         /// <value>
         /// The commander.
         /// </value>
-        protected ViewCommander Commander { get; set; }
+        protected CommerceCommander Commander { get; set; }
 
         /// <inheritdoc />
         /// <summary>Initializes a new instance of the <see cref="T:Sitecore.Framework.Pipelines.PipelineBlock" /> class.</summary>
         /// <param name="commander">The commerce commander.</param>
-        public DoActionEditNotesBlock(ViewCommander commander)
+        public PopulateFeaturesActionsBlock(CommerceCommander commander)
             : base(null)
         {
 
@@ -64,31 +61,27 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         {
             Condition.Requires(entityView).IsNotNull($"{this.Name}: The argument can not be null");
 
-            var notesActionsPolicy = context.GetPolicy<KnownNotesActionsPolicy>();
+            var viewsPolicy = context.GetPolicy<KnownFeaturesViewsPolicy>();
 
-            // Only proceed if the right action was invoked
-            if (string.IsNullOrEmpty(entityView.Action) || !entityView.Action.Equals(notesActionsPolicy.EditNotes, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(entityView?.Name) || !entityView.Name.Equals(viewsPolicy.Features, StringComparison.OrdinalIgnoreCase))
             {
                 return Task.FromResult(entityView);
             }
 
-            // Get the sellable item from the context
-            var entity = context.CommerceContext.GetObject<SellableItem>(x => x.Id.Equals(entityView.EntityId));
-            if (entity == null)
-            {
-                return Task.FromResult(entityView);
-            }
+            var actionPolicy = entityView.GetPolicy<ActionsPolicy>();
 
-            // Get the notes component from the sellable item or its variation
-            var component = entity.GetComponent<NotesComponent>(entityView.ItemId);
+            actionPolicy.Actions.Add(
+              new EntityActionView
+              {
+                  Name = context.GetPolicy<KnownFeaturesActionsPolicy>().EditFeatures,
+                  DisplayName = "Edit Sellable Item Features",
+                  Description = "Edits the sellable item Features",
+                  IsEnabled = true,
+                  EntityView = entityView.Name,
+                  Icon = "edit"
+              });
 
-            // Map entity view properties to component
-            component.WarrantyInformation = entityView.Properties.FirstOrDefault(x => x.Name.Equals(nameof(NotesComponent.WarrantyInformation), StringComparison.OrdinalIgnoreCase))?.Value;
-            component.InternalNotes = entityView.Properties.FirstOrDefault(x => x.Name.Equals(nameof(NotesComponent.InternalNotes), StringComparison.OrdinalIgnoreCase))?.Value;
 
-            // Persist changes
-            this.Commander.PersistEntity(context.CommerceContext, entity);
-            
             return Task.FromResult(entityView);
         }
     }

@@ -34,15 +34,18 @@ namespace Plugin.Sample.Notes
 
             services.Sitecore().Pipelines(config => config.ConfigurePipeline<IGetEntityViewPipeline>(c =>
                      {
-                         c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>();
+                         c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>()
+                         .Add<GetFeaturesViewBlock>().After<GetNotesViewBlock>();
                      })
                      .ConfigurePipeline<IPopulateEntityViewActionsPipeline>(c =>
                      {
-                         c.Add<PopulateNotesActionsBlock>().After<InitializeEntityViewActionsBlock>();
+                         c.Add<PopulateNotesActionsBlock>().After<InitializeEntityViewActionsBlock>()
+                         .Add<PopulateFeaturesActionsBlock>().After<PopulateNotesActionsBlock>();
                      })
                      .ConfigurePipeline<IDoActionPipeline>(c =>
                      {
-                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>();
+                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>()
+                         .Add<DoActionEditFeaturesBlock>().After<DoActionEditNotesBlock>();
                      })
                  );
 
