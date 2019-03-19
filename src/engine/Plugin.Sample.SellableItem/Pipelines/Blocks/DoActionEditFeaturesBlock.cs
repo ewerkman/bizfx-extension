@@ -16,6 +16,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Defines a pipeline block
@@ -83,7 +84,8 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
             var component = entity.GetComponent<FeaturesComponent>(entityView.ItemId);
 
             // Map entity view properties to component
-            component.FeatureList = entityView.Properties.FirstOrDefault(x => x.Name.Equals(nameof(FeaturesComponent.FeatureList), StringComparison.OrdinalIgnoreCase))?.Value;
+            var featuresAsString = entityView.Properties.FirstOrDefault(x => x.Name.Equals(nameof(FeaturesComponent.FeatureList), StringComparison.OrdinalIgnoreCase))?.Value;
+            component.FeatureList = JsonConvert.DeserializeObject<string[]>(featuresAsString);
 
             // Persist changes
             this.Commander.PersistEntity(context.CommerceContext, entity);

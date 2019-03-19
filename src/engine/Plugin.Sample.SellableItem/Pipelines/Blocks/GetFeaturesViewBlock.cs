@@ -7,6 +7,8 @@
 namespace Plugin.Sample.Notes.Pipelines.Blocks
 {
     using Plugin.Sample.Notes.Components;
+    using Plugin.Sample.Notes.Pipelines.GetLocalizedProductFeatures;
+    using Plugin.Sample.Notes.Pipelines.GetLocalizedProductFeatures.Arguments;
     using Plugin.Sample.Notes.Policies;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
@@ -14,6 +16,8 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -59,7 +63,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         /// <returns>
         /// The <see cref="PipelineArgument"/>.
         /// </returns>
-        public override Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
+        public async override Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
         {
             Condition.Requires(entityView).IsNotNull($"{this.Name}: The argument can not be null");
 
@@ -75,13 +79,13 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
             // Make sure that we target the correct views
             if (!isMasterView && !isConnectView && !isFeaturesView)
             {
-                return Task.FromResult(entityView);
+                return entityView;
             }
 
             // Only proceed if the current entity is a sellable item
             if (!(request.Entity is SellableItem))
             {
-                return Task.FromResult(entityView);
+                return entityView;
             }
 
             var sellableItem = (SellableItem)request.Entity;
@@ -107,7 +111,8 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
                     Name = featuresviewsPolicy.Features,
                     DisplayName = featuresviewsPolicy.Features,
                     EntityId = entityView.EntityId,
-                    ItemId = variationId
+                    ItemId = variationId,
+                    EntityVersion = entityView.EntityVersion
                 };
 
                 entityView.ChildViews.Add(view);
@@ -117,16 +122,42 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
 
             var component = sellableItem.GetComponent<FeaturesComponent>(variationId);
 
+            var selectizeConfig = await GetSelectizeConfiguration(context);
+
             targetView.Properties.Add(new ViewProperty
             {
                 Name = nameof(FeaturesComponent.FeatureList),
-                RawValue = component.FeatureList,
+                RawValue = component.FeatureList?.ToArray<string>(),
                 IsReadOnly = !isEditView,
                 IsRequired = true,
-                UiType = "Selectize"
+                UiType = isEditView ? "Selectize" : "Tags",
+                Policies = new List<Policy> { selectizeConfig },
+                OriginalType = "List"
             });
 
-            return Task.FromResult(entityView);
+            return entityView;
+        }
+
+        private async Task<SelectizeConfigPolicy> GetSelectizeConfiguration(CommercePipelineExecutionContext context)
+        {
+            var availableSelectionsPolicy = new SelectizeConfigPolicy();
+
+            availableSelectionsPolicy.Options = await TryGetAvailableFeatures(context);
+            availableSelectionsPolicy.Placeholder = await TryLocalize("Placeholder", context);
+
+            return availableSelectionsPolicy;
+        }
+
+        private async Task<List<Selection>> TryGetAvailableFeatures(CommercePipelineExecutionContext context)
+        {
+            var localizedOptions = await this.Commander.Pipeline<IGetLocalizedProductFeaturesPipeline>().Run(new LocalizedProductFeaturesArgument(), context);
+            return localizedOptions?.Select(term => new Selection() { DisplayName = term.Value, Name = term.Key }).ToList() ?? new List<Selection>();
+        }
+
+        private async Task<string> TryLocalize(string name, CommercePipelineExecutionContext context)
+        {
+            var result = await Commander.Pipeline<IGetLocalizedProductFeaturesConfigurationPipeline>().Run(new LocalizedProductFeaturesConfigurationArgument(name, (object[])null), context);
+            return result?.Value ?? name;
         }
     }
 }

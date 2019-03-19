@@ -25,6 +25,8 @@ import { TagInputModule } from 'ngx-chips';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
+import {NgSelectizeModule} from 'ng-selectize';
+
 /* Feature Modules */
 import { ScBizFxModule, ScHttpXsrfInterceptor } from '@sitecore/bizfx';
 
@@ -75,6 +77,7 @@ import localeJaExtra from '../locales/extra/ja';
 import localeDe from '../locales/de';
 import localeDeExtra from '../locales/extra/de';
 import { CounterComponent } from './counter/counter.component';
+import { SelectizeComponent } from './selectize/selectize.component';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
@@ -112,6 +115,8 @@ registerLocaleData(localeJa, 'Ja-JP', localeJaExtra);
     ScProgressIndicatorPanelModule,
     ScTableModule,
 
+    NgSelectizeModule,
+
     ScBizFxModule,
 
     AppRoutingModule
@@ -142,7 +147,8 @@ registerLocaleData(localeJa, 'Ja-JP', localeJaExtra);
     DecimalPipe,
     CurrencyPipe,
     DatePipe,
-    CounterComponent
+    CounterComponent,
+    SelectizeComponent
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ScHttpXsrfInterceptor, multi: true}

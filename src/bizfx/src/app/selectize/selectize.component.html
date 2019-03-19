@@ -1,0 +1,6 @@
+<div class="form-group">
+  <label for="tag-{{property.Name}}">{{property.DisplayName}}</label>
+  <ng-selectize [config]="config" [options]="options" [placeholder]="placeholder"
+   [(ngModel)]='items'
+   (onBlur)="onInputBlurred()"></ng-selectize>
+</div>

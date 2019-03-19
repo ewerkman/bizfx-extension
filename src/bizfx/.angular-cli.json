@@ -22,9 +22,14 @@
       "styles": [
         "../node_modules/@speak/icon-fonts/dist/sitecore-icons.css",
         "../node_modules/@speak/styling/dist/styles/sitecore.css",
+        "../node_modules/selectize/dist/css/selectize.css",
+        "../node_modules/selectize/dist/css/selectize.bootstrap3.css",
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/jquery/dist/jquery.min.js",
+        "../node_modules/ng-selectize/selectize/selectize.standalone.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

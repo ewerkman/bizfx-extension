@@ -1,21 +1,22 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FeaturesComponent.cs" company="Sitecore Corporation">
+// <copyright file="LocalizedProductFeaturesArgument.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Plugin.Sample.Notes.Components
+namespace Plugin.Sample.Notes.Pipelines.GetLocalizedProductFeatures.Arguments
 {
     using Sitecore.Commerce.Core;
-    using System.Collections.Generic;
+    using Sitecore.Framework.Conditions;
 
     /// <inheritdoc />
     /// <summary>
-    /// The FeaturesComponent.
+    /// The LocalizedProductFeaturesArgument.
     /// </summary>
-    public class FeaturesComponent : Component
+    public class LocalizedProductFeaturesArgument : PipelineArgument
     {
-        public IList<string> FeatureList { get; set; }
+        public LocalizedProductFeaturesArgument()
+        {
+        }
     }
 }
-

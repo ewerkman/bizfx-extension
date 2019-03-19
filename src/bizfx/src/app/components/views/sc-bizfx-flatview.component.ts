@@ -33,6 +33,7 @@ export class ScBizFxFlatViewComponent {
     * Parse the value of property with `UiType` of `List`.
     */
   getList(property: ScBizFxProperty) {
+    console.log(property);
     return property.Value != null ? JSON.parse(property.Value) : [];
   }
 }
