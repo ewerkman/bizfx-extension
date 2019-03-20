@@ -38,6 +38,7 @@ namespace Plugin.Sample.Notes
                      config.ConfigurePipeline<IGetEntityViewPipeline>(c =>
                         c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>()
                          .Add<GetFeaturesViewBlock>().After<GetNotesViewBlock>()
+                         .Add<ExtendSellableItemDetailsViewBlock>().After<GetFeaturesViewBlock>()
                      )
                      .ConfigurePipeline<IPopulateEntityViewActionsPipeline>(c =>
                         c.Add<PopulateNotesActionsBlock>().After<InitializeEntityViewActionsBlock>()
