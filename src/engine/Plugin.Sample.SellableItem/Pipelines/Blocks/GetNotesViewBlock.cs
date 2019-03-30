@@ -25,7 +25,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     ///         Sitecore.Commerce.Core.PipelineArgument, Sitecore.Commerce.Core.CommercePipelineExecutionContext}
     ///     </cref>
     /// </seealso>
-    [PipelineDisplayName("Change to <Project>Constants.Pipelines.Blocks.<Block Name>")]
+    [PipelineDisplayName(nameof(GetNotesViewBlock))]
     public class GetNotesViewBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
     {
         /// <summary>
