@@ -1,20 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DoActionEditNotesBlock.cs" company="Sitecore Corporation">
+// <copyright file="ExtendSellableItemDetailsViewBlock.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Plugin.Sample.Notes.Pipelines.Blocks
 {
-    using Plugin.Sample.Notes.Components;
-    using Plugin.Sample.Notes.Policies;
     using Sitecore.Commerce.Core;
-    using Sitecore.Commerce.Plugin.Catalog;
     using Sitecore.Commerce.EntityViews;
+    using Sitecore.Commerce.Plugin.Catalog;
     using Sitecore.Framework.Conditions;
     using Sitecore.Framework.Pipelines;
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -27,7 +24,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     ///     </cref>
     /// </seealso>
     [PipelineDisplayName("Change to <Project>Constants.Pipelines.Blocks.<Block Name>")]
-    public class DoActionEditNotesBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
+    public class ExtendSellableItemDetailsViewBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
     {
         /// <summary>
         /// Gets or sets the commander.
@@ -35,12 +32,12 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         /// <value>
         /// The commander.
         /// </value>
-        protected ViewCommander Commander { get; set; }
+        protected CommerceCommander Commander { get; set; }
 
         /// <inheritdoc />
         /// <summary>Initializes a new instance of the <see cref="T:Sitecore.Framework.Pipelines.PipelineBlock" /> class.</summary>
         /// <param name="commander">The commerce commander.</param>
-        public DoActionEditNotesBlock(ViewCommander commander)
+        public ExtendSellableItemDetailsViewBlock(CommerceCommander commander)
             : base(null)
         {
 
@@ -51,7 +48,7 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         /// <summary>
         /// The execute.
         /// </summary>
-        /// <param name="entityView">
+        /// <param name="arg">
         /// The pipeline argument.
         /// </param>
         /// <param name="context">
@@ -64,31 +61,37 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
         {
             Condition.Requires(entityView).IsNotNull($"{this.Name}: The argument can not be null");
 
-            var notesActionsPolicy = context.GetPolicy<KnownNotesActionsPolicy>();
-
-            // Only proceed if the right action was invoked
-            if (string.IsNullOrEmpty(entityView.Action) || !entityView.Action.Equals(notesActionsPolicy.EditNotes, StringComparison.OrdinalIgnoreCase))
+            var policy = context.GetPolicy<KnownCatalogViewsPolicy>();
+            EntityViewArgument request = context.CommerceContext.GetObject<EntityViewArgument>();
+            if (string.IsNullOrEmpty(request?.ViewName) || !request.ViewName.Equals(policy.Master, StringComparison.OrdinalIgnoreCase))
             {
                 return Task.FromResult(entityView);
             }
 
-            // Get the sellable item from the context
-            var entity = context.CommerceContext.GetObject<SellableItem>(x => x.Id.Equals(entityView.EntityId));
-            if (entity == null)
+            if (!(request.Entity is SellableItem) || !string.IsNullOrEmpty(request.ForAction))
             {
                 return Task.FromResult(entityView);
             }
 
-            // Get the notes component from the sellable item or its variation
-            var component = entity.GetComponent<NotesComponent>(entityView.ItemId);
+            var sellableItem = request.Entity as SellableItem;
 
-            // Map entity view properties to component
-            component.WarrantyInformation = entityView.Properties.FirstOrDefault(x => x.Name.Equals(nameof(NotesComponent.WarrantyInformation), StringComparison.OrdinalIgnoreCase))?.Value;
-            component.InternalNotes = entityView.Properties.FirstOrDefault(x => x.Name.Equals(nameof(NotesComponent.InternalNotes), StringComparison.OrdinalIgnoreCase))?.Value;
+            var dateCreatedProperty = new ViewProperty() {
+                DisplayName = "Date Created",
+                Name = nameof(sellableItem.DateCreated),
+                IsReadOnly = true,
+                RawValue = sellableItem.DateCreated
+            };
+            entityView.Properties.Add(dateCreatedProperty);
 
-            // Persist changes
-            this.Commander.PersistEntity(context.CommerceContext, entity);
-            
+            var dateUpdatedProperty = new ViewProperty()
+            {
+                DisplayName = "Date Updated",
+                Name = nameof(sellableItem.DateUpdated),
+                IsReadOnly = true,
+                RawValue = sellableItem.DateUpdated
+            };
+            entityView.Properties.Add(dateUpdatedProperty);
+
             return Task.FromResult(entityView);
         }
     }

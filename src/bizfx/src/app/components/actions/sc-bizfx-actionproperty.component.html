@@ -41,6 +41,10 @@
         </button>
       </div>
 
+      <div *ngSwitchCase="'Selectize'">
+        <app-selectize id="tagsView-{{property.Name}}" [actionForm]="actionForm" [property]="property"></app-selectize>
+      </div>
+
       <div *ngSwitchDefault>
 
         <div [ngSwitch]="property.OriginalType">

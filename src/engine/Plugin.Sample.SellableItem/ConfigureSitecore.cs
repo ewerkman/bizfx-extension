@@ -9,6 +9,8 @@ namespace Plugin.Sample.Notes
     using System.Reflection;
     using Microsoft.Extensions.DependencyInjection;
     using Plugin.Sample.Notes.Pipelines.Blocks;
+    using Plugin.Sample.Notes.Pipelines.GetLocalizedProductFeatures;
+    using Plugin.Sample.Notes.Pipelines.GetLocalizedProductFeatures.Blocks;
     using Sitecore.Commerce.Core;
     using Sitecore.Commerce.EntityViews;
     using Sitecore.Commerce.Plugin.BusinessUsers;
@@ -32,18 +34,30 @@ namespace Plugin.Sample.Notes
             var assembly = Assembly.GetExecutingAssembly();
             services.RegisterAllPipelineBlocks(assembly);
 
-            services.Sitecore().Pipelines(config => config.ConfigurePipeline<IGetEntityViewPipeline>(c =>
-                     {
-                         c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>();
-                     })
+            services.Sitecore().Pipelines(config =>
+                     config.ConfigurePipeline<IGetEntityViewPipeline>(c =>
+                        c.Add<GetNotesViewBlock>().After<GetSellableItemDetailsViewBlock>()
+                         .Add<GetFeaturesViewBlock>().After<GetNotesViewBlock>()
+                         .Add<ExtendSellableItemDetailsViewBlock>().After<GetFeaturesViewBlock>()
+                     )
                      .ConfigurePipeline<IPopulateEntityViewActionsPipeline>(c =>
-                     {
-                         c.Add<PopulateNotesActionsBlock>().After<InitializeEntityViewActionsBlock>();
-                     })
+                        c.Add<PopulateNotesActionsBlock>().After<InitializeEntityViewActionsBlock>()
+                         .Add<PopulateFeaturesActionsBlock>().After<PopulateNotesActionsBlock>()
+                     )
                      .ConfigurePipeline<IDoActionPipeline>(c =>
-                     {
-                         c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>();
-                     })
+                        c.Add<DoActionEditNotesBlock>().After<ValidateEntityVersionBlock>()
+                         .Add<DoActionEditFeaturesBlock>().After<DoActionEditNotesBlock>()
+                     )
+                     .AddPipeline<IGetLocalizedProductFeaturesConfigurationPipeline, GetLocalizedProductFeaturesConfigurationPipeline>(c =>
+                        c.Add<GetLocalizedProductFeaturesConfigurationFromCacheBlock>()
+                         .Add<GetProductFeaturesConfigurationLocalizedBlock>()
+                         .Add<SetLocalizedProductFeaturesConfigurationToCacheBlock>()
+                        )
+                    .AddPipeline<IGetLocalizedProductFeaturesPipeline, GetLocalizedProductFeaturesPipeline>(c =>
+                       c.Add<GetLocalizedProductFeaturesFromCacheBlock>()
+                        .Add<GetProductFeaturesLocalizedBlock>()
+                        .Add<SetLocalizedProductFeaturesToCacheBlock>()
+                   )
                  );
 
             services.RegisterAllCommands(assembly);

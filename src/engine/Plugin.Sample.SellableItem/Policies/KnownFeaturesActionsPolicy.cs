@@ -1,21 +1,20 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FeaturesComponent.cs" company="Sitecore Corporation">
+// <copyright file="KnownFeaturesActionsPolicy.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Plugin.Sample.Notes.Components
+namespace Plugin.Sample.Notes.Policies
 {
     using Sitecore.Commerce.Core;
-    using System.Collections.Generic;
 
     /// <inheritdoc />
     /// <summary>
-    /// The FeaturesComponent.
+    /// Defines a policy
     /// </summary>
-    public class FeaturesComponent : Component
+    /// <seealso cref="T:Sitecore.Commerce.Core.Policy" />
+    public class KnownFeaturesActionsPolicy : Policy
     {
-        public IList<string> FeatureList { get; set; }
+        public string EditFeatures { get; internal set; } = nameof(EditFeatures);
     }
 }
-
