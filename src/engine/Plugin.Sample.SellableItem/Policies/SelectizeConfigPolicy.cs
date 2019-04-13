@@ -9,13 +9,6 @@ using System.Collections.Generic;
 
 namespace Plugin.Sample.Notes.Policies
 {
-
-
-    /// <inheritdoc />
-    /// <summary>
-    /// Defines a policy
-    /// </summary>
-    /// <seealso cref="T:Sitecore.Commerce.Core.Policy" />
     public class SelectizeConfigPolicy : Policy
     {
         public SelectizeConfigPolicy()

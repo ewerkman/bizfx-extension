@@ -1,10 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PipelineBlock1Block.cs" company="Sitecore Corporation">
-//   Copyright (c) Sitecore Corporation 1999-2019
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Plugin.Sample.Notes.Pipelines.Blocks
+﻿namespace Plugin.Sample.Notes.Pipelines.Blocks
 {
     using Plugin.Sample.Notes.Components;
     using Plugin.Sample.Notes.Policies;
@@ -16,49 +10,17 @@ namespace Plugin.Sample.Notes.Pipelines.Blocks
     using System;
     using System.Threading.Tasks;
 
-    /// <summary>
-    /// Defines a pipeline block
-    /// </summary>
-    /// <seealso>
-    ///     <cref>
-    ///         Sitecore.Framework.Pipelines.PipelineBlock{Sitecore.Commerce.Core.PipelineArgument,
-    ///         Sitecore.Commerce.Core.PipelineArgument, Sitecore.Commerce.Core.CommercePipelineExecutionContext}
-    ///     </cref>
-    /// </seealso>
     [PipelineDisplayName(nameof(GetNotesViewBlock))]
     public class GetNotesViewBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
     {
-        /// <summary>
-        /// Gets or sets the commander.
-        /// </summary>
-        /// <value>
-        /// The commander.
-        /// </value>
         protected ViewCommander Commander { get; set; }
 
-        /// <inheritdoc />
-        /// <summary>Initializes a new instance of the <see cref="T:Sitecore.Framework.Pipelines.PipelineBlock" /> class.</summary>
-        /// <param name="commander">The commerce commander.</param>
         public GetNotesViewBlock(ViewCommander commander)
             : base(null)
         {
-
             this.Commander = commander;
-
         }
 
-        /// <summary>
-        /// The execute.
-        /// </summary>
-        /// <param name="entityView">
-        /// The pipeline argument.
-        /// </param>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PipelineArgument"/>.
-        /// </returns>
         public override Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
         {
             Condition.Requires(entityView).IsNotNull($"{this.Name}: The argument can not be null");

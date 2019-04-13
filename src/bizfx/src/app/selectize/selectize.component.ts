@@ -1,5 +1,5 @@
-import { Component, Input, NgModule, OnInit, ViewChild, forwardRef } from '@angular/core';
-import { FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, Input, OnInit} from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ScBizFxProperty } from '@sitecore/bizfx';
 
 @Component({
@@ -18,10 +18,6 @@ export class SelectizeComponent implements OnInit {
    * Defines the view property to be render
    */
   @Input() property: ScBizFxProperty;
-
-  onBlur(item: any) {
-    console.log(item);
-  }
 
   config: any = {
     plugins: ['dropdown_direction', 'remove_button'],
